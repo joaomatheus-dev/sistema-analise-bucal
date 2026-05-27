@@ -2,6 +2,7 @@ export const emptyRegister = {
   name: "",
   email: "",
   university: "",
+  customUniversity: "",
   password: "",
   confirmPassword: ""
 };

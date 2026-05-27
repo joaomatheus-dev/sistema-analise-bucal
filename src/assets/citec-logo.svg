@@ -1,0 +1,21 @@
+<svg width="320" height="320" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="320" height="320" rx="28" fill="#FFFFFF"/>
+  <circle cx="160" cy="160" r="136" fill="#F7F8FA" stroke="#C8CDD4" stroke-width="4"/>
+  <path d="M54 266C86 244 124 234 160 234C196 234 234 244 266 266V296H54V266Z" fill="#144EA1"/>
+  <text x="74" y="288" fill="#F5B300" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="900">ROBÓTICA</text>
+  <text x="102" y="303" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700">NÚCLEO DE PESQUISA</text>
+  <text x="68" y="164" fill="#0B69B3" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="900">CESMAC</text>
+  <text x="178" y="180" fill="#0B69B3" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">CENTRO DE</text>
+  <text x="178" y="200" fill="#0B69B3" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">INOVAÇÃO</text>
+  <text x="178" y="220" fill="#0B69B3" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">TECNOLÓGICA</text>
+  <path d="M160 68C142 76 132 92 132 110C132 133 149 147 160 156C171 147 188 133 188 110C188 92 178 76 160 68Z" fill="#F5B300"/>
+  <path d="M160 156V224" stroke="#144EA1" stroke-width="10" stroke-linecap="round"/>
+  <path d="M144 224H176" stroke="#144EA1" stroke-width="10" stroke-linecap="round"/>
+  <path d="M148 240H172" stroke="#144EA1" stroke-width="10" stroke-linecap="round"/>
+  <path d="M152 256H168" stroke="#144EA1" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="150" cy="92" rx="54" ry="26" transform="rotate(-18 150 92)" stroke="#144EA1" stroke-width="5"/>
+  <ellipse cx="172" cy="100" rx="54" ry="26" transform="rotate(26 172 100)" stroke="#144EA1" stroke-width="5"/>
+  <path d="M214 54L228 64L220 82L206 72L214 54Z" fill="#F5B300"/>
+  <path d="M222 58L250 34" stroke="#144EA1" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="253" cy="31" r="7" fill="#F5B300"/>
+</svg>

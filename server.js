@@ -11,6 +11,7 @@ const {
   getUserById,
   getUserByToken,
   listAdmins,
+  listUserUniversitiesDashboard,
   countAdmins,
   createUser,
   updateAdmin,
@@ -42,7 +43,14 @@ const {
 const PORT = process.env.PORT || 3000;
 const CLIENT_DIST_DIR = path.join(__dirname, "dist");
 
+function setCorsHeaders(res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-file-name");
+}
+
 function jsonResponse(res, statusCode, payload) {
+  setCorsHeaders(res);
   res.writeHead(statusCode, { "Content-Type": "application/json; charset=utf-8" });
   res.end(JSON.stringify(payload));
 }
@@ -319,6 +327,13 @@ function serveClientFallback(res) {
 }
 
 async function handleApi(req, res, url) {
+  if (req.method === "OPTIONS") {
+    setCorsHeaders(res);
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   if (req.method === "POST" && url.pathname === "/api/register") {
     const body = await parseBody(req);
     const { name, email, university, password, confirmPassword } = body;
@@ -351,6 +366,20 @@ async function handleApi(req, res, url) {
     }
 
     return jsonResponse(res, 200, await listAdmins());
+  }
+
+  if (req.method === "GET" && url.pathname === "/api/dashboard/universities") {
+    const admin = await requireAdmin(req, res);
+    if (!admin) {
+      return;
+    }
+
+    const dashboard = await listUserUniversitiesDashboard();
+    return jsonResponse(res, 200, {
+      universities: dashboard.universities,
+      totalUniversities: dashboard.universities.length,
+      totalUsers: dashboard.totalUsers
+    });
   }
 
   if (req.method === "POST" && url.pathname === "/api/admins") {

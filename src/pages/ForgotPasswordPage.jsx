@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function ForgotPasswordPage({ onSubmit, onMessage }) {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState(null);
-  const navigate = useNavigate();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -14,10 +13,6 @@ function ForgotPasswordPage({ onSubmit, onMessage }) {
     try {
       const data = await onSubmit(email);
       setResult(data);
-      onMessage({
-        text: "Recuperação iniciada. Use o link gerado abaixo para redefinir a senha.",
-        type: "success"
-      });
     } catch (error) {
       onMessage({ text: error.message, type: "error" });
     } finally {
@@ -25,46 +20,65 @@ function ForgotPasswordPage({ onSubmit, onMessage }) {
     }
   }
 
-  return (
-    <section className="auth-layout">
-      <article className="spotlight-card">
-        <p className="eyebrow">Acesso seguro</p>
-        <h2>Recuperar senha</h2>
-        <p>
-          Informe o e-mail cadastrado. O sistema vai gerar um link interno de redefinição
-          válido por 30 minutos.
-        </p>
-      </article>
+  if (result) {
+    return (
+      <section className="auth-screen">
+        <div className="auth-hero">
+          <div className="auth-logo-mark">IO</div>
+          <div className="auth-wordmark">
+            Img<span>Odonto</span>
+          </div>
+          <span className="brand-underline auth-logo-underline" />
+        </div>
 
-      <article className="form-card stack">
+        <article className="auth-card confirmation-card">
+          <div className="confirmation-icon">✓</div>
+          <div className="auth-card-heading">
+            <h2>Email de confirmação enviado</h2>
+            <p>Verifique seu email e siga as instruções. Veja também o spam.</p>
+          </div>
+          <Link className="primary-button full-width link-button" to={result.recoveryUrl}>
+            Abrir email
+          </Link>
+        </article>
+      </section>
+    );
+  }
+
+  return (
+    <section className="auth-screen">
+      <div className="auth-hero">
+        <div className="auth-logo-mark">IO</div>
+        <div className="auth-wordmark">
+          Img<span>Odonto</span>
+        </div>
+        <span className="brand-underline auth-logo-underline" />
+      </div>
+
+      <article className="auth-card">
+        <div className="auth-card-heading">
+          <h2>Recuperar senha</h2>
+          <p>Informe o email cadastrado para continuar.</p>
+        </div>
+
         <form className="stack" onSubmit={handleSubmit}>
           <input
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             type="email"
-            placeholder="E-mail cadastrado"
+            placeholder="Email"
             required
           />
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Gerando..." : "Gerar link de recuperação"}
+          <button className="primary-button full-width" type="submit" disabled={submitting}>
+            {submitting ? "Gerando..." : "Enviar confirmação"}
           </button>
         </form>
 
-        {result ? (
-          <div className="recovery-box">
-            <p className="muted-text">Link de redefinição gerado para este ambiente:</p>
-            <Link className="text-link break-link" to={result.recoveryUrl}>
-              {`${window.location.origin}${result.recoveryUrl}`}
-            </Link>
-            <p className="muted-text">
-              Expira em {new Date(result.expiresAt).toLocaleString("pt-BR")}.
-            </p>
-          </div>
-        ) : null}
-
-        <button className="secondary" type="button" onClick={() => navigate("/login")}>
-          Voltar para login
-        </button>
+        <div className="auth-footer-links">
+          <p>
+            Lembrou sua senha? <Link to="/login">Entrar</Link>
+          </p>
+        </div>
       </article>
     </section>
   );

@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import AppHeader from "./components/AppHeader";
 import AdminGuard from "./components/AdminGuard";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AuthPage from "./pages/AuthPage";
 import CategoryAdminPage from "./pages/CategoryAdminPage";
+import CreatorsPage from "./pages/CreatorsPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import GalleryPage from "./pages/GalleryPage";
 import ImageAdminPage from "./pages/ImageAdminPage";
@@ -16,6 +18,7 @@ const storageKey = "analise-bucal-auth";
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
   const [booting, setBooting] = useState(true);
@@ -271,13 +274,22 @@ function App() {
     return <div className="boot-screen">Carregando sistema...</div>;
   }
 
+  const isAuthScreen =
+    location.pathname.startsWith("/login") ||
+    location.pathname.startsWith("/cadastro") ||
+    location.pathname.startsWith("/recuperar-senha") ||
+    location.pathname.startsWith("/redefinir-senha");
+
   return (
-    <div className="app-shell">
-      <AppHeader user={user} onLogout={handleLogout} />
+    <div className={`app-shell${isAuthScreen ? " auth-shell-mode" : ""}`}>
+      {!isAuthScreen ? <AppHeader user={user} onLogout={handleLogout} /> : null}
 
       <main className="page-frame">
         <Routes>
-          <Route path="/" element={<GalleryPage api={api} categories={categories} />} />
+          <Route
+            path="/"
+            element={<GalleryPage api={api} categories={categories} user={user} />}
+          />
           <Route
             path="/post/:postId"
             element={
@@ -289,6 +301,7 @@ function App() {
               />
             }
           />
+          <Route path="/quem-somos" element={<CreatorsPage />} />
           <Route
             path="/login"
             element={
@@ -342,6 +355,14 @@ function App() {
               ) : (
                 <ResetPasswordPage onSubmit={handlePasswordReset} onMessage={notify} />
               )
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminGuard user={user}>
+                <AdminDashboardPage api={api} onMessage={notify} />
+              </AdminGuard>
             }
           />
           <Route

@@ -10,6 +10,7 @@ function PostDetailPage({ api, canComment, isAdmin, onMessage }) {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState("");
   const [zoomed, setZoomed] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
   const [activeTab, setActiveTab] = useState("description");
 
   async function loadPost() {
@@ -44,7 +45,6 @@ function PostDetailPage({ api, canComment, isAdmin, onMessage }) {
         body: JSON.stringify({ text: comment })
       });
       setComment("");
-      onMessage({ text: "Comentário enviado com sucesso.", type: "success" });
       await loadPost();
     } catch (error) {
       onMessage({ text: error.message, type: "error" });
@@ -57,11 +57,21 @@ function PostDetailPage({ api, canComment, isAdmin, onMessage }) {
         method: "PATCH",
         body: JSON.stringify({ status })
       });
-      onMessage({ text: `Comentário ${status} com sucesso.`, type: "success" });
       await loadPost();
     } catch (error) {
       onMessage({ text: error.message, type: "error" });
     }
+  }
+
+  function handleZoomMove(event) {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+    const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+
+    setZoomOrigin({
+      x: Math.min(100, Math.max(0, x)),
+      y: Math.min(100, Math.max(0, y))
+    });
   }
 
   if (loading) {
@@ -80,32 +90,40 @@ function PostDetailPage({ api, canComment, isAdmin, onMessage }) {
   });
 
   return (
-    <section className="stack">
-      <div className="hero-panel">
-        <div className="stack compact">
-          <p className="muted-text">{post.category}</p>
+    <section className="stack post-screen">
+      <section className="hero-banner compact-hero">
+        <div className="hero-banner-copy">
+          <p className="hero-kicker">Resultado do caso</p>
           <h2>{post.title}</h2>
+          <p>{post.category}</p>
         </div>
-        <div className="post-actions">
-          <Link className="text-link" to="/">
-            Voltar para a biblioteca
+        <div className="hero-actions">
+          <Link className="ghost-button link-button" to="/">
+            Voltar
           </Link>
-          <a className="share-link" href={shareUrl} target="_blank" rel="noreferrer">
-            Compartilhar no WhatsApp
+          <a className="primary-button link-button" href={shareUrl} target="_blank" rel="noreferrer">
+            Compartilhar
           </a>
         </div>
-      </div>
+      </section>
 
-      <div className="post-detail-layout">
+      <div className="stack">
         <div className="stack">
           <button
-            className={`zoom-stage${zoomed ? " zoomed" : ""}`}
+            className={`zoom-stage figma-zoom-stage${zoomed ? " zoomed" : ""}`}
             type="button"
             onClick={() => setZoomed((current) => !current)}
+            onMouseMove={handleZoomMove}
+            onMouseEnter={handleZoomMove}
           >
-            <img src={selectedImage} alt={post.title} className="zoom-image" />
+            <img
+              src={selectedImage}
+              alt={post.title}
+              className="zoom-image"
+              style={{ transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%` }}
+            />
           </button>
-          <p className="muted-text">Clique na imagem para alternar o zoom.</p>
+
           <div className="thumb-strip">
             {gallery.map((image, index) => (
               <button
@@ -123,7 +141,30 @@ function PostDetailPage({ api, canComment, isAdmin, onMessage }) {
           </div>
         </div>
 
-        <div className="form-card wide stack">
+        <article className="result-card emphasis-card">
+          <div className="result-card-top">
+            <div className="stack compact">
+              <h3>{post.category}</h3>
+              <p className="muted-text">{post.title}</p>
+            </div>
+            <span className="outline-chip">Caso clínico</span>
+          </div>
+
+          <div className="result-actions">
+            <span className="outline-chip">{gallery.length} imagens</span>
+            <span className="outline-chip">{comments.length} comentários</span>
+          </div>
+        </article>
+
+        <article className="disclaimer-card">
+          <p className="disclaimer-title">Disclaimer clínico</p>
+          <p>
+            O conteúdo deste post deve ser utilizado como apoio visual e acadêmico, sempre com
+            interpretação clínica profissional.
+          </p>
+        </article>
+
+        <article className="form-card wide stack">
           <div className="tab-bar" role="tablist" aria-label="Detalhes do post">
             <button
               type="button"
@@ -144,11 +185,12 @@ function PostDetailPage({ api, canComment, isAdmin, onMessage }) {
           {activeTab === "description" ? (
             <div className="tab-panel stack compact">
               <h3>Descrição do post</h3>
-              <p>{post.description}</p>
+              <div
+                className="rich-content"
+                dangerouslySetInnerHTML={{ __html: post.description }}
+              />
             </div>
-          ) : null}
-
-          {activeTab === "comments" ? (
+          ) : (
             <>
               <h3>Comentários</h3>
               {canComment ? (
@@ -158,7 +200,9 @@ function PostDetailPage({ api, canComment, isAdmin, onMessage }) {
                     onChange={(event) => setComment(event.target.value)}
                     placeholder="Adicionar comentário técnico"
                   />
-                  <button type="submit">Enviar comentário</button>
+                  <button className="primary-button" type="submit">
+                    Enviar comentário
+                  </button>
                 </form>
               ) : (
                 <p className="muted-text">Faça login para comentar este post.</p>
@@ -193,8 +237,8 @@ function PostDetailPage({ api, canComment, isAdmin, onMessage }) {
                 ))}
               </div>
             </>
-          ) : null}
-        </div>
+          )}
+        </article>
       </div>
     </section>
   );

@@ -82,9 +82,7 @@ function CategoryAdminPage({
   }
 
   async function handleDelete(category) {
-    const confirmed = window.confirm(
-      `Deseja realmente excluir a categoria "${category.name}"?`
-    );
+    const confirmed = window.confirm(`Deseja realmente excluir a categoria "${category.name}"?`);
 
     if (!confirmed) {
       return;
@@ -102,109 +100,128 @@ function CategoryAdminPage({
   }
 
   return (
-    <section className="admin-layout">
-      <article className="spotlight-card">
-        <p className="eyebrow">Importação estruturada</p>
-        <h2>Carregamento de datasets</h2>
-        <p>
-          Envie um arquivo `.csv` e o sistema vai extrair categorias para alimentar
-          novos filtros.
-        </p>
-      </article>
+    <section className="stack">
+      <section className="hero-banner compact-hero">
+        <div className="hero-banner-copy">
+          <p className="hero-kicker">Área administrativa</p>
+          <h2>Categorias clínicas</h2>
+          <p>Importe categorias por CSV ou crie manualmente novos grupos de organização.</p>
+        </div>
+        <div className="metrics-pill">
+          <span>{categories.length} categorias</span>
+          <span>{lastImport?.length || 0} no último envio</span>
+        </div>
+      </section>
 
-      <article className="form-card wide stack">
-        <form className="stack" onSubmit={handleSubmit}>
-          <input
-            type="file"
-            accept=".csv,text/csv"
-            onChange={(event) => setFile(event.target.files?.[0] || null)}
-            required
-          />
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Importando..." : "Importar dataset"}
-          </button>
-        </form>
-
-        <form className="stack" onSubmit={handleCreateCategorySubmit}>
-          <input
-            value={newCategory}
-            onChange={(event) => setNewCategory(event.target.value)}
-            placeholder="Criar nova categoria manualmente"
-          />
-          <button className="secondary" type="submit" disabled={creatingCategory}>
-            {creatingCategory ? "Criando..." : "Criar categoria"}
-          </button>
-        </form>
-
-        {lastImport?.length ? (
-          <div className="stack compact">
-            <h3>Categorias detectadas no último envio</h3>
-            <div className="tag-cloud">
-              {lastImport.map((category) => (
-                <span key={category.id || category.name} className="tag-chip">
-                  {category.name}
-                </span>
-              ))}
-            </div>
+      <section className="admin-layout">
+        <article className="spotlight-card admin-side-card">
+          <p className="eyebrow">Controle do acervo</p>
+          <h2>Organização por categoria</h2>
+          <p>
+            Mantenha o vocabulário do sistema padronizado para melhorar filtros, buscas e
+            cadastro de casos.
+          </p>
+          <div className="admin-bullet-list">
+            <span>Importação CSV</span>
+            <span>Criação manual</span>
+            <span>Edição e exclusão</span>
           </div>
-        ) : null}
+        </article>
 
-        <div className="stack compact">
-          <h3>Categorias atuais</h3>
-          <div className="category-list">
-            {categories.map((category) => (
-              <div key={category.id} className="category-row">
-                {editingCategoryId === category.id ? (
-                  <form className="category-edit-form" onSubmit={handleEditSubmit}>
-                    <input
-                      value={editingName}
-                      onChange={(event) => setEditingName(event.target.value)}
-                      placeholder="Novo nome da categoria"
-                    />
-                    <button type="submit" disabled={savingEdit}>
-                      {savingEdit ? "Salvando..." : "Salvar"}
-                    </button>
-                    <button
-                      className="secondary"
-                      type="button"
-                      onClick={() => {
-                        setEditingCategoryId(null);
-                        setEditingName("");
-                      }}
-                    >
-                      Cancelar
-                    </button>
-                  </form>
-                ) : (
-                  <>
-                    <span className="tag-chip muted">{category.name}</span>
-                    <div className="inline-actions">
+        <article className="form-card wide admin-main-card stack">
+          <form className="stack" onSubmit={handleSubmit}>
+            <input
+              type="file"
+              accept=".csv,text/csv"
+              onChange={(event) => setFile(event.target.files?.[0] || null)}
+              required
+            />
+            <button className="primary-button" type="submit" disabled={submitting}>
+              {submitting ? "Importando..." : "Importar dataset"}
+            </button>
+          </form>
+
+          <form className="stack" onSubmit={handleCreateCategorySubmit}>
+            <input
+              value={newCategory}
+              onChange={(event) => setNewCategory(event.target.value)}
+              placeholder="Criar nova categoria manualmente"
+            />
+            <button className="secondary" type="submit" disabled={creatingCategory}>
+              {creatingCategory ? "Criando..." : "Criar categoria"}
+            </button>
+          </form>
+
+          {lastImport?.length ? (
+            <div className="stack compact">
+              <h3>Categorias detectadas no último envio</h3>
+              <div className="tag-cloud">
+                {lastImport.map((category) => (
+                  <span key={category.id || category.name} className="tag-chip">
+                    {category.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="stack compact">
+            <h3>Categorias atuais</h3>
+            <div className="category-list">
+              {categories.map((category) => (
+                <div key={category.id} className="category-row">
+                  {editingCategoryId === category.id ? (
+                    <form className="category-edit-form" onSubmit={handleEditSubmit}>
+                      <input
+                        value={editingName}
+                        onChange={(event) => setEditingName(event.target.value)}
+                        placeholder="Novo nome da categoria"
+                      />
+                      <button className="primary-button" type="submit" disabled={savingEdit}>
+                        {savingEdit ? "Salvando..." : "Salvar"}
+                      </button>
                       <button
                         className="secondary"
                         type="button"
                         onClick={() => {
-                          setEditingCategoryId(category.id);
-                          setEditingName(category.name);
+                          setEditingCategoryId(null);
+                          setEditingName("");
                         }}
                       >
-                        Editar
+                        Cancelar
                       </button>
-                      <button
-                        className="secondary"
-                        type="button"
-                        onClick={() => handleDelete(category)}
-                        disabled={deletingId === category.id}
-                      >
-                        {deletingId === category.id ? "Excluindo..." : "Excluir"}
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+                    </form>
+                  ) : (
+                    <>
+                      <span className="tag-chip muted">{category.name}</span>
+                      <div className="inline-actions">
+                        <button
+                          className="secondary"
+                          type="button"
+                          onClick={() => {
+                            setEditingCategoryId(category.id);
+                            setEditingName(category.name);
+                          }}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="secondary"
+                          type="button"
+                          onClick={() => handleDelete(category)}
+                          disabled={deletingId === category.id}
+                        >
+                          {deletingId === category.id ? "Excluindo..." : "Excluir"}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
+      </section>
     </section>
   );
 }

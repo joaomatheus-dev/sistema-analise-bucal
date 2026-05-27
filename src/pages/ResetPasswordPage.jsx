@@ -24,7 +24,6 @@ function ResetPasswordPage({ onSubmit, onMessage }) {
       }
 
       await onSubmit({ token, password, confirmPassword });
-      onMessage({ text: "Senha redefinida com sucesso. Faça login com a nova senha.", type: "success" });
       navigate("/login");
     } catch (error) {
       onMessage({ text: error.message, type: "error" });
@@ -34,16 +33,21 @@ function ResetPasswordPage({ onSubmit, onMessage }) {
   }
 
   return (
-    <section className="auth-layout">
-      <article className="spotlight-card">
-        <p className="eyebrow">Nova senha</p>
-        <h2>Redefinir senha</h2>
-        <p>
-          {email ? `Conta selecionada: ${email}.` : "Informe a nova senha para concluir a recuperação."}
-        </p>
-      </article>
+    <section className="auth-screen">
+      <div className="auth-hero">
+        <div className="auth-logo-mark">IO</div>
+        <div className="auth-wordmark">
+          Img<span>Odonto</span>
+        </div>
+        <span className="brand-underline auth-logo-underline" />
+      </div>
 
-      <article className="form-card stack">
+      <article className="auth-card">
+        <div className="auth-card-heading">
+          <h2>Redefinir senha</h2>
+          <p>{email ? `Conta selecionada: ${email}` : "Informe sua nova senha."}</p>
+        </div>
+
         <form className="stack" onSubmit={handleSubmit}>
           <input value={token} readOnly placeholder="Token de recuperação" />
           <input
@@ -60,14 +64,16 @@ function ResetPasswordPage({ onSubmit, onMessage }) {
             placeholder="Confirmar nova senha"
             required
           />
-          <button type="submit" disabled={submitting}>
+          <button className="primary-button full-width" type="submit" disabled={submitting}>
             {submitting ? "Salvando..." : "Salvar nova senha"}
           </button>
         </form>
 
-        <Link className="text-link" to="/recuperar-senha">
-          Gerar outro link de recuperação
-        </Link>
+        <div className="auth-footer-links">
+          <p>
+            <Link to="/recuperar-senha">Gerar outro link de recuperação</Link>
+          </p>
+        </div>
       </article>
     </section>
   );

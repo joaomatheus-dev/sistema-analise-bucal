@@ -3,3 +3,9 @@ dist/
 .env
 data/
 *.sqlite
+mobile-app/
+mobileapp2/
+scratch/
+temp_splash_repo/
+tmp_figma_zip/
+tmp_pptx_edit_*/

@@ -225,6 +225,39 @@ async function listAdmins() {
   return result.rows;
 }
 
+async function listUserUniversitiesDashboard() {
+  const result = await pool.query(
+    `
+      WITH university_counts AS (
+        SELECT
+          trim(university) AS name,
+          COUNT(*)::int AS total
+        FROM users
+        WHERE role = 'user'
+          AND trim(university) <> ''
+        GROUP BY trim(university)
+      )
+      SELECT
+        name,
+        total,
+        ROUND((total * 100.0 / NULLIF(SUM(total) OVER (), 0))::numeric, 1) AS percentage
+      FROM university_counts
+      ORDER BY total DESC, lower(name)
+    `
+  );
+
+  const universities = result.rows.map((row) => ({
+    name: row.name,
+    total: row.total,
+    percentage: Number(row.percentage)
+  }));
+
+  return {
+    universities,
+    totalUsers: universities.reduce((sum, item) => sum + Number(item.total || 0), 0)
+  };
+}
+
 async function getUserById(id) {
   const result = await pool.query(
     `
@@ -761,6 +794,7 @@ module.exports = {
   getUserById,
   getUserByToken,
   listAdmins,
+  listUserUniversitiesDashboard,
   countAdmins,
   createUser,
   updateAdmin,
